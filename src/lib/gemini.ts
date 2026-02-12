@@ -49,17 +49,24 @@ Do not include any markdown formatting or code blocks, just raw JSON.`;
   const data = await response.json();
   const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
-  // Sanitize markdown code blocks and extract JSON
-  const cleanText = text.replace(/```json|```/g, '').trim();
-  const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) {
-    throw new Error('Failed to parse AI response as JSON');
-  }
+  console.log("Raw Gemini Response:", text); // Debug log
 
-  const parsed = JSON.parse(jsonMatch[0]);
-  return {
-    executive_summary: parsed.executive_summary || 'No summary available.',
-    strengths: parsed.strengths || 'No strengths data available.',
-    intervention: parsed.intervention || 'No intervention recommendations available.',
-  };
+  // 1. Remove ```json and ``` wrapping
+  let cleanText = text.replace(/```json/g, '').replace(/```/g, '');
+
+  // 2. Trim whitespace
+  cleanText = cleanText.trim();
+
+  // 3. Parse
+  try {
+    const parsed = JSON.parse(cleanText);
+    return {
+      executive_summary: parsed.executive_summary || 'No summary available.',
+      strengths: parsed.strengths || 'No strengths data available.',
+      intervention: parsed.intervention || 'No intervention recommendations available.',
+    };
+  } catch (error) {
+    console.error("Failed to parse cleaned JSON:", cleanText);
+    throw new Error("AI response was not valid JSON. See console for details.");
+  }
 }
