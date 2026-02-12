@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { KeyRound, ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -7,11 +7,11 @@ interface ApiKeyInputProps {
   onSubmit: (key: string) => void;
 }
 
-const ApiKeyInput = ({ onSubmit }: ApiKeyInputProps) => {
+const ApiKeyInput = forwardRef<HTMLDivElement, ApiKeyInputProps>(({ onSubmit }, ref) => {
   const [key, setKey] = useState('');
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div ref={ref} className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-md animate-fade-up">
         <div className="gradient-hero rounded-2xl p-8 text-primary-foreground text-center mb-8 shadow-elevated">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/10 backdrop-blur mb-4">
@@ -47,6 +47,8 @@ const ApiKeyInput = ({ onSubmit }: ApiKeyInputProps) => {
       </div>
     </div>
   );
-};
+});
+
+ApiKeyInput.displayName = 'ApiKeyInput';
 
 export default ApiKeyInput;
