@@ -49,8 +49,9 @@ Do not include any markdown formatting or code blocks, just raw JSON.`;
   const data = await response.json();
   const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
-  // Extract JSON from the response
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  // Sanitize markdown code blocks and extract JSON
+  const cleanText = text.replace(/```json|```/g, '').trim();
+  const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
     throw new Error('Failed to parse AI response as JSON');
   }
